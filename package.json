@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
@@ -23,6 +24,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@prisma/client": "^6.5.0",
     "@tailwindcss/postcss": "^4.0.12",
     "@types/node": "^22",
     "@types/react": "^19",
@@ -30,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.2",
     "postcss": "^8",
+    "prisma": "^6.5.0",
     "tailwindcss": "^4.0.12",
     "typescript": "^5"
   }
