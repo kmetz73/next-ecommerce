@@ -34,3 +34,32 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Next auth for Google
+
+import NextAuth from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import { NextAuthOptions } from 'next-auth';
+
+export const authOptions: NextAuthOptions = {
+providers: [
+GoogleProvider({
+clientId: process.env.GOOGLE_CLIENT_ID!,
+clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+}),
+],
+callbacks: {
+async jwt({ token, account }) {
+if (account) {
+token.accessToken = account.access_token;
+}
+return token;
+},
+async session({ session, token }) {
+session.accessToken = token.accessToken;
+return session;
+},
+},
+};
+
+export default NextAuth(authOptions);
