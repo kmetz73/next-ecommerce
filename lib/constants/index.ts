@@ -9,5 +9,11 @@ export const LATEST_PRODUCTS_LIMIT =
 export const signInDefaultsValues = {
   email: '',
   password: '',
-  
+};
+
+export const signUpDefaultValues = {
+  name: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
 };
