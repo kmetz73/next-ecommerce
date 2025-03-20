@@ -1,11 +1,10 @@
-import NextAuth, { NextAuthConfig } from 'next-auth';
-// import { authConfig } from './auth.config';
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/db/prisma';
 import { cookies } from 'next/headers';
 import { compareSync } from 'bcrypt-ts-edge';
 import CredentialsProvider from 'next-auth/providers/credentials';
-
 export const config = {
   pages: {
     signIn: '/sign-in',
@@ -55,6 +54,7 @@ export const config = {
     }),
   ],
   callbacks: {
+    ...authConfig.callbacks,
     async session({ session, user, trigger, token }: any) {
       // Set the user ID from the token
       session.user.id = token.sub;
@@ -99,6 +99,6 @@ export const config = {
       return token;
     },
   },
-} satisfies NextAuthConfig;
+};
 
 export const { handlers, auth, signIn, signOut } = NextAuth(config);
