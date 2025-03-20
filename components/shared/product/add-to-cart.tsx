@@ -21,7 +21,7 @@ const AddToCart = ({ item }: { item: CartItem }) => {
     // Handel successful add to cart
     toast.custom((t) => (
       <div className="bg-white shadow-md rounded-lg p-4 border border-gray-200 flex items-center space-x-4">
-        <span className=" text-gray-700">{`${item.name} added to cart`}</span>
+        <span className=" text-gray-700">{res.message}</span>
         <Button
           onClick={() => {
             router.push('/cart'); // Navigate to cart page
