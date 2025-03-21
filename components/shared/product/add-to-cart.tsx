@@ -33,7 +33,7 @@ const AddToCart = ({ cart, item }: { cart?: Cart; item: CartItem }) => {
             }}
             className="ml-auto bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 transition"
           >
-            Add to Cart
+            Go to Cart
           </Button>
         </div>
       ));
