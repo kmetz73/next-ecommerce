@@ -1,14 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import { useTransition } from 'react';
-import { ShippingAddress } from '@/types';
-import { shippingAddressSchema } from '@/lib/validators';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ControllerRenderProps, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { shippingAddressDefaultValues } from '@/lib/constants';
+import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -18,13 +10,21 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { updateUserAddress } from '@/lib/actions/user.actions';
+import { shippingAddressDefaultValues } from '@/lib/constants';
+import { shippingAddressSchema } from '@/lib/validators';
+import { ShippingAddress } from '@/types';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
+import { SubmitHandler, useForm, ControllerRenderProps } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { z } from 'zod';
 
 const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
   const router = useRouter();
 
-  // 1. Define your form.
   const form = useForm<z.infer<typeof shippingAddressSchema>>({
     resolver: zodResolver(shippingAddressSchema),
     defaultValues: address || shippingAddressDefaultValues,
@@ -32,22 +32,30 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
 
   const [isPending, startTransition] = useTransition();
 
-  const onSubmit = (values: any) => {
-    console.log(values);
-    return;
-  };
+  const onSubmit: SubmitHandler<z.infer<typeof shippingAddressSchema>> = async (
+    values
+  ) => {
+    startTransition(async () => {
+      const res = await updateUserAddress(values);
 
+      if (!res.success) {
+        toast.error(res.message);
+        return;
+      }
+      router.push('/payment-method');
+    });
+  };
   return (
     <>
       <div className="max-w-md mx-auto space-y-4">
         <h1 className="h2-bold mt-4">Shipping Address</h1>
         <p className="text-sm text-muted-foreground">
-          Please enter your Shipping Address
+          Please enter and address to ship to
         </p>
         <Form {...form}>
           <form
             method="post"
-            className="space-y-4"
+            className=" space-y-4"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <div className="flex flex-col md:flex-row gap-5">
@@ -65,9 +73,8 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   <FormItem className="w-full">
                     <FormLabel>Full Name</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Full Name" {...field} />
+                      <Input placeholder="Enter your Full Name" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -86,11 +93,10 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   >;
                 }) => (
                   <FormItem className="w-full">
-                    <FormLabel> Address</FormLabel>
+                    <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Street Address" {...field} />
+                      <Input placeholder="Enter your address" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -109,14 +115,10 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   >;
                 }) => (
                   <FormItem className="w-full">
-                    <FormLabel> Address 2</FormLabel>
+                    <FormLabel>Address line 2</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter Street Address 2 (optional)"
-                        {...field}
-                      />
+                      <Input placeholder="Apt # if applicable" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -135,11 +137,10 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   >;
                 }) => (
                   <FormItem className="w-full">
-                    <FormLabel> City</FormLabel>
+                    <FormLabel>City</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter City" {...field} />
+                      <Input placeholder="Enter your city" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -158,14 +159,10 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   >;
                 }) => (
                   <FormItem className="w-full">
-                    <FormLabel> State</FormLabel>
+                    <FormLabel>State</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter 2 digit for the  state"
-                        {...field}
-                      />
+                      <Input placeholder="Enter your State" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -184,11 +181,10 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   >;
                 }) => (
                   <FormItem className="w-full">
-                    <FormLabel> Zip code</FormLabel>
+                    <FormLabel>Zip Code</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter 5 digit Zip code" {...field} />
+                      <Input placeholder="Enter your Zip Code" {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -207,11 +203,13 @@ const ShippingAddressForm = ({ address }: { address: ShippingAddress }) => {
                   >;
                 }) => (
                   <FormItem className="w-full">
-                    <FormLabel> Country</FormLabel>
+                    <FormLabel>Country</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter Country Name" {...field} />
+                      <Input
+                        placeholder="Enter the Country you live in"
+                        {...field}
+                      />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
