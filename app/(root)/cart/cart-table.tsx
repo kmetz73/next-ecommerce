@@ -32,8 +32,8 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
           Cart is empty. <Link href="/">Go shopping</Link>
         </div>
       ) : (
-        <div className="grid md:grid-cols-4 md:gap-5">
-          <div className="overflow-x-auto md:col-span-3">
+        <div className="grid md:grid-cols-4 md:gap-5 overflow-x-auto">
+          <div className="min-w-full md:col-span-3">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -48,7 +48,7 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                     <TableCell>
                       <Link
                         href={`/products/${item.slug}`}
-                        className="flex items-center"
+                        className="flex items-center  "
                       >
                         <Image
                           src={item.image}
@@ -56,10 +56,10 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                           width={50}
                           height={50}
                         />
-                        <span className="px-2 ">{item.name}</span>
+                        <span className="px-2 sm:block  ">{item.name}</span>
                       </Link>
                     </TableCell>
-                    <TableCell className="flex-center gpa-2">
+                    <TableCell className="flex-center ">
                       <Button
                         type="button"
                         disabled={isPending}
@@ -79,10 +79,10 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
                         {isPending ? (
                           <Loader className="w-4 h-4 animate-spin" />
                         ) : (
-                          <Minus className="h-4 w-4" />
+                          <Minus className="h4 w-4" />
                         )}
                       </Button>
-                      <span>{item.qty}</span>
+                      <span className="px-1">{item.qty}</span>
                       <Button
                         type="button"
                         disabled={isPending}
