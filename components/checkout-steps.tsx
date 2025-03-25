@@ -4,7 +4,7 @@ import React from 'react';
 const CheckoutSteps = ({ current = 0 }) => {
   return (
     <div className="flex-between flex-col md:flex-row space-x-2 space-y-2 mb-10">
-      {['User Login', 'Shipping Address', 'Payment Method', 'Order Placed'].map(
+      {['User Login', 'Shipping Address', 'Payment Method', 'Place Order'].map(
         (step, index) => (
           <React.Fragment key={step}>
             <div
@@ -15,7 +15,7 @@ const CheckoutSteps = ({ current = 0 }) => {
             >
               {step}
             </div>
-            {step !== 'Order Placed' && (
+            {step !== 'Place Order' && (
               <hr className="w-16 border-t border-gray-300 mx-2" />
             )}
           </React.Fragment>
