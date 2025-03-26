@@ -1,15 +1,15 @@
 'use server';
 
-import { isRedirectError } from 'next/dist/client/components/redirect-error';
-import { formatErrors } from '../utils';
 import { auth } from '@/auth';
+// import { isRedirectError } from 'next/dist/client/components/redirect-error';
+import { formatErrors } from '../utils';
 import { getMyCart } from './cart.actions';
 import { getUserById } from './user.actions';
 import { insertOrderSchema } from '../validators';
 import { prisma } from '@/db/prisma';
 import { CartItem } from '@/types';
 
-// Create order and create the order items
+// Create order  and  order items
 export async function createOrder() {
   try {
     const session = await auth();
@@ -32,7 +32,7 @@ export async function createOrder() {
     if (!user.address) {
       return {
         success: false,
-        message: 'No shipping address',
+        message: 'No Address found',
         redirectTo: '/shipping-address',
       };
     }
@@ -45,7 +45,7 @@ export async function createOrder() {
       };
     }
 
-    // Create order object
+    // create order object
     const order = insertOrderSchema.parse({
       userId: user.id,
       shippingAddress: user.address,
@@ -60,7 +60,7 @@ export async function createOrder() {
     const insertedOrderId = await prisma.$transaction(async (tx) => {
       // Create order
       const insertedOrder = await tx.order.create({ data: order });
-      // Create order items from the cart items
+      // Create the order items from the cart items
       for (const item of cart.items as CartItem[]) {
         await tx.orderItem.create({
           data: {
@@ -81,7 +81,6 @@ export async function createOrder() {
           itemsPrice: 0,
         },
       });
-
       return insertedOrder.id;
     });
 
@@ -93,7 +92,7 @@ export async function createOrder() {
       redirectTo: `/order/${insertedOrderId}`,
     };
   } catch (error) {
-    if (isRedirectError(error)) throw error;
+    // if (isRedirectError(error)) throw error;
     return { success: false, message: formatErrors(error) };
   }
 }
