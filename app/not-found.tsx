@@ -21,7 +21,7 @@ const Notfound = () => {
         </p>
         <Button
           variant="outline"
-          className="mt-4 ml-2"
+          className="mt-4 px-2  "
           onClick={() => (window.location.href = '/')}
         >
           Back to Home
