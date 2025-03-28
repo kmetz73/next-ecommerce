@@ -34,7 +34,7 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
       ) : (
         <div className="grid md:grid-cols-4 md:gap-5 overflow-x-auto">
           <div className="min-w-full md:col-span-3">
-            <Table>
+            <Table className="table-auto">
               <TableHeader>
                 <TableRow>
                   <TableHead>Item</TableHead>
@@ -45,7 +45,7 @@ const CartTable = ({ cart }: { cart?: Cart }) => {
               <TableBody>
                 {cart.items.map((item) => (
                   <TableRow key={item.slug}>
-                    <TableCell>
+                    <TableCell className="whitespace-normal break-words">
                       <Link
                         href={`/products/${item.slug}`}
                         className="flex items-center  "
