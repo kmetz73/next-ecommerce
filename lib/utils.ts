@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import qs from 'query-string';
+import { skip } from 'node:test';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -75,7 +77,7 @@ export function formatId(id: string) {
 }
 // console.log(formatId('90401bc4-88c6-4318-b26f-df66ec96dff5'));
 
-//Format the date and times
+// Format date and times
 export const formatDateTime = (dateString: Date) => {
   const dateTimeOptions: Intl.DateTimeFormatOptions = {
     month: 'short', // abbreviated month name (e.g., 'Oct')
@@ -114,3 +116,28 @@ export const formatDateTime = (dateString: Date) => {
     timeOnly: formattedTime,
   };
 };
+
+//  From the pagination links
+export function FormUrlQuery({
+  params,
+  key,
+  value,
+}: {
+  params: string;
+  key: string;
+  value: string | number;
+}) {
+  const query = qs.parse(params);
+
+  query[key] = typeof value === 'number' ? value.toString() : value;
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query,
+    },
+    {
+      skipNull: true,
+    }
+  );
+}
