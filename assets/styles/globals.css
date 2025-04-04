@@ -118,6 +118,12 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
+  /* Default container class */
+  .default-container {
+    @apply container mx-auto flex flex-col items-center justify-center space-y-4 h-[calc(100vh-200px)];
+  }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -151,8 +157,6 @@
     @apply bg-background text-foreground;
   }
 }
-
-
 
 @layer base {
   * {
