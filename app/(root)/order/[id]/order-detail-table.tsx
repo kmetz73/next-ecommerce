@@ -23,14 +23,20 @@ import {
 import {
   createPayPalOrder,
   approvePayPalOrder,
+  updateOrderToPaidCOD,
+  deliveredOrder,
 } from '@/lib/actions/order.actions';
+import { useTransition } from 'react';
+import { Button } from '@/components/ui/button';
 
 const OrderDetailsTable = ({
   order,
   paypalClientId,
+  isAdmin,
 }: {
   order: Order;
   paypalClientId: string;
+  isAdmin: boolean;
 }) => {
   const {
     id,
@@ -79,6 +85,48 @@ const OrderDetailsTable = ({
       showToast(res);
     };
   };
+
+  // Button to  mark order as paid
+  const MarkAsPaidButton = () => {
+    const [isPending, startTransition] = useTransition();
+
+    return (
+      <Button
+        type="button"
+        disabled={isPending}
+        onClick={() =>
+          startTransition(async () => {
+            const res = await updateOrderToPaidCOD(order.id);
+
+            res.success ? toast(res.message) : toast.error(res.message);
+          })
+        }
+      >
+        {isPending ? 'processing...' : 'Mark as Paid'}
+      </Button>
+    );
+  };
+  // Button to  mark order as Delivered
+  const MarkAsDeliveredButton = () => {
+    const [isPending, startTransition] = useTransition();
+
+    return (
+      <Button
+        type="button"
+        disabled={isPending}
+        onClick={() =>
+          startTransition(async () => {
+            const res = await deliveredOrder(order.id);
+
+            res.success ? toast(res.message) : toast.error(res.message);
+          })
+        }
+      >
+        {isPending ? 'processing...' : 'Mark as Delivered'}
+      </Button>
+    );
+  };
+
   return (
     <>
       <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
@@ -191,6 +239,12 @@ const OrderDetailsTable = ({
                   </PayPalScriptProvider>
                 </div>
               )}
+
+              {/* Cash on Delivery */}
+              {isAdmin && !isPaid && paymentMethod === 'CashOnDelivery' && (
+                <MarkAsPaidButton />
+              )}
+              {isAdmin && isPaid && !isDelivered && <MarkAsDeliveredButton />}
             </CardContent>
           </Card>
         </div>
