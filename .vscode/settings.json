@@ -1,4 +1,12 @@
 {
   "WillLuke.nextjs.addTypesOnSave": true,
   "WillLuke.nextjs.hasPrompted": true
+
+  
+},
+{
+  "tailwindCSS.experimental.classRegex": [
+    ["Variants \\=([^;]*);", "\"([^\"]*)\""]
+  ]
 }
+
