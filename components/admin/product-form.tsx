@@ -130,7 +130,7 @@ const ProductForm = ({
                     <Input placeholder="Enter slug" {...field} />
                     <Button
                       type="button"
-                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 mt-2"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-4 bg-gray-500 hover:bg-gray-600 text-white"
                       onClick={() => {
                         form.setValue(
                           'slug',
