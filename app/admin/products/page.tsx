@@ -70,7 +70,7 @@ const AdminProductsPage = async (props: {
               <TableCell>{product.rating}</TableCell>
               <TableCell className="flex gap-1">
                 <Button asChild variant="outline" size="sm">
-                  <Link href={`/admin/products/${product.id}/edit`}>Edit</Link>
+                  <Link href={`/admin/products/${product.id}`}>Edit</Link>
                 </Button>
                 <DeleteDialog id={product.id} action={deleteProduct} />
               </TableCell>
@@ -79,10 +79,7 @@ const AdminProductsPage = async (props: {
         </TableBody>
       </Table>
       {products?.totalPages > 1 && (
-        <Pagination
-          page={Number(page) || 1}
-          totalPages={products?.totalPages}
-        />
+        <Pagination page={page || 1} totalPages={products?.totalPages} />
       )}
     </div>
   );

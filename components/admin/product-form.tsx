@@ -1,5 +1,6 @@
 'use client';
-import toast from 'react-hot-toast';
+
+import { toast } from 'react-hot-toast';
 import { productDefaultValues } from '@/lib/constants';
 import { insertingProductSchema, updateProductSchema } from '@/lib/validators';
 import { Product } from '@/types';
@@ -15,14 +16,15 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form';
+import slugify from 'slugify';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import slugify from 'slugify';
 import { Textarea } from '../ui/textarea';
 import { createProduct, updateProduct } from '@/lib/actions/product.actions';
 import { UploadButton } from '@/lib/uploadthing';
 import { Card, CardContent } from '../ui/card';
 import Image from 'next/image';
+import { Checkbox } from '../ui/checkbox';
 
 const ProductForm = ({
   type,
@@ -30,14 +32,10 @@ const ProductForm = ({
   productId,
 }: {
   type: 'Create' | 'Update';
-  product?: Product;
-  productId?: number;
+  product?: Product | null;
+  productId?: string;
 }) => {
   const router = useRouter();
-
-  // another way to define the schema fro zodResolver
-  // const schema =
-  //   type === 'Update' ? updateProductSchema : insertingProductSchema;
 
   const form = useForm<z.infer<typeof insertingProductSchema>>({
     resolver: zodResolver(
@@ -50,7 +48,7 @@ const ProductForm = ({
   const onSubmit: SubmitHandler<
     z.infer<typeof insertingProductSchema>
   > = async (values) => {
-    // on create product
+    // On Create
     if (type === 'Create') {
       const res = await createProduct(values);
 
@@ -62,14 +60,14 @@ const ProductForm = ({
       router.push('/admin/products');
     }
 
-    // on Update
+    // On Update
     if (type === 'Update') {
       if (!productId) {
         router.push('/admin/products');
         return;
       }
 
-      const res = await updateProduct({ ...values, id: productId.toString() });
+      const res = await updateProduct({ ...values, id: productId });
 
       if (!res.success) {
         toast.error(res.message);
@@ -81,6 +79,8 @@ const ProductForm = ({
   };
 
   const images = form.watch('images');
+  const isFeatured = form.watch('isFeatured');
+  const banner = form.watch('banner');
 
   return (
     <Form {...form}>
@@ -90,7 +90,7 @@ const ProductForm = ({
         className="space-y-8"
       >
         <div className="flex flex-col md:flex-row gap-5">
-          {/* Name field  */}
+          {/* Name */}
           <FormField
             control={form.control}
             name="name"
@@ -111,23 +111,26 @@ const ProductForm = ({
               </FormItem>
             )}
           />
-          {/* Slug field  */}
+          {/* Slug */}
           <FormField
             control={form.control}
             name="slug"
-            render={({ field }) => (
-              <FormItem className="w-full flex flex-col gap-1">
-                <FormLabel>Slug</FormLabel>
+            render={({
+              field,
+            }: {
+              field: ControllerRenderProps<
+                z.infer<typeof insertingProductSchema>,
+                'slug'
+              >;
+            }) => (
+              <FormItem className="w-full">
+                <FormLabel>Name</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input
-                      placeholder="Generate Slug"
-                      {...field}
-                      className="pr-28 h-10" // padding-right for the button space
-                    />
+                    <Input placeholder="Enter slug" {...field} />
                     <Button
                       type="button"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-4 bg-gray-500 hover:bg-gray-600 text-white"
+                      className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 mt-2"
                       onClick={() => {
                         form.setValue(
                           'slug',
@@ -145,7 +148,7 @@ const ProductForm = ({
           />
         </div>
         <div className="flex flex-col md:flex-row gap-5">
-          {/* Category field  */}
+          {/* Category */}
           <FormField
             control={form.control}
             name="category"
@@ -160,13 +163,13 @@ const ProductForm = ({
               <FormItem className="w-full">
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter  category" {...field} />
+                  <Input placeholder="Enter category" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          {/* Brand field  */}
+          {/* Brand */}
           <FormField
             control={form.control}
             name="brand"
@@ -181,7 +184,7 @@ const ProductForm = ({
               <FormItem className="w-full">
                 <FormLabel>Brand</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter a Brand name" {...field} />
+                  <Input placeholder="Enter brand" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -189,7 +192,7 @@ const ProductForm = ({
           />
         </div>
         <div className="flex flex-col md:flex-row gap-5">
-          {/* Price field  */}
+          {/* Price */}
           <FormField
             control={form.control}
             name="price"
@@ -204,13 +207,13 @@ const ProductForm = ({
               <FormItem className="w-full">
                 <FormLabel>Price</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter Price" {...field} />
+                  <Input placeholder="Enter product price" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          {/* Stock field  */}
+          {/* Stock */}
           <FormField
             control={form.control}
             name="stock"
@@ -225,7 +228,7 @@ const ProductForm = ({
               <FormItem className="w-full">
                 <FormLabel>Stock</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter Stock" {...field} />
+                  <Input placeholder="Enter stock" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -233,7 +236,7 @@ const ProductForm = ({
           />
         </div>
         <div className="upload-field flex flex-col md:flex-row gap-5">
-          {/* Images field  */}
+          {/* Images */}
           <FormField
             control={form.control}
             name="images"
@@ -248,7 +251,7 @@ const ProductForm = ({
                           key={image}
                           src={image}
                           alt="product image"
-                          className="w-20 h-20 object-center object-cover rounded-sm"
+                          className="w-20 h-20 object-cover object-center rounded-sm"
                           width={100}
                           height={100}
                         />
@@ -272,7 +275,50 @@ const ProductForm = ({
             )}
           />
         </div>
-        <div className="upload-field">{/* isFeatured */}</div>
+        <div className="upload-field">
+          {/* isFeatured */}
+          Featured Product
+          <Card>
+            <CardContent className="space-y-2 mt-2">
+              <FormField
+                control={form.control}
+                name="isFeatured"
+                render={({ field }) => (
+                  <FormItem className="space-x-2 items-center">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel>Is Featured?</FormLabel>
+                  </FormItem>
+                )}
+              />
+              {isFeatured && banner && (
+                <Image
+                  src={banner}
+                  alt="banner image"
+                  className="w-full object-cover object-center rounded-sm"
+                  width={1920}
+                  height={680}
+                />
+              )}
+
+              {isFeatured && !banner && (
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res: { url: string }[]) => {
+                    form.setValue('banner', res[0].url);
+                  }}
+                  onUploadError={(error: Error) => {
+                    toast.error(`ERROR! ${error.message}`);
+                  }}
+                />
+              )}
+            </CardContent>
+          </Card>
+        </div>
         <div>
           {/* Description */}
           <FormField
@@ -290,9 +336,9 @@ const ProductForm = ({
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Enter a product description"
-                    {...field}
+                    placeholder="Enter product description"
                     className="resize-none"
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />
@@ -301,18 +347,18 @@ const ProductForm = ({
           />
         </div>
         <div>
-          {/* Submit Button */}
           <Button
             type="submit"
             size="lg"
             disabled={form.formState.isSubmitting}
             className="button col-span-2 w-full"
           >
-            {form.formState.isSubmitting ? 'Submitting...' : `${type}Product`}
+            {form.formState.isSubmitting ? 'Submitting' : `${type} Product`}
           </Button>
         </div>
       </form>
     </Form>
   );
 };
+
 export default ProductForm;
